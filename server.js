@@ -32,27 +32,31 @@ app.get("/api/timestamp", (req, res) => {
 //#2 for .. else
 app.get("/api/timestamp/:date", (req, res) => {
   var param = req.params.date;
-  
+
   var numbers = /^[0-9]+$/;
-  if (param.match(numbers)){
+  if (param.match(numbers)) {
     var unix = parseInt(param);
     var date = new Date(unix);
     res.json({ unix: date.getTime(), utc: date.toUTCString() });
   } else {
+    var date = new Date(param);
 
-      var date = new Date(param);
-    
-      if(date.getTime() > 0){
-        res.json({ unix: date.getTime(), utc: date.toUTCString() });
-      }else{
-        res.json({error: "Invalid Date"});
-      }
-      //res.json({ unix: date.getTime(), utc: date.toUTCString() });
-    
-      
-    
+    if (date.getTime() > 0) {
+      res.json({ unix: date.getTime(), utc: date.toUTCString() });
+    } else {
+      res.json({ error: "Invalid Date" });
+    }
   }
 });
+
+// project#2 : request header
+app.get("/api/whoami",(req,res)=>{
+  
+  var ipv4 = /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/g;
+  var ip = req.ip;
+  res.json({ipaddress:ip,language:req.header('accept-language'),
+software:req.header('user-agent')});
+})
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
   console.log("Your app is listening on port " + listener.address().port);
